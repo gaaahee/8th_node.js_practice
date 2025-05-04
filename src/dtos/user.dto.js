@@ -3,6 +3,7 @@ export const bodyToUser = (body) => {
 
   return {
     email: body.email,
+    password: body.password,
     name: body.name,
     gender: body.gender,
     birth,
