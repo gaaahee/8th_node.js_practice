@@ -31,3 +31,35 @@ export const addReview = async (shopId, reviewData) => {
     throw err;
   }
 };
+
+// 특정 사용자가 작성한 모든 리뷰 조회
+export const getMyReviewsByUserId = async (userId, cursor) => {
+  const take = 5;
+  try {
+    const reviews = await prisma.review.findMany({
+      where: {
+        user_id: userId,
+        ...(cursor && { id: { lt: parseInt(cursor) } }),
+      },
+      select: {
+        id: true,
+        comment: true,
+        rating: true,
+        image_url: true,
+        created_at: true,
+        shop: { // 리뷰에 해당하는 상점 정보 중 일부만 선택
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { id: "desc" },
+      take: take,
+    });
+    return reviews;
+  } catch (error) {
+    console.error("Error in getMyReviewsByUserId:", error);
+    throw error;
+  }
+};

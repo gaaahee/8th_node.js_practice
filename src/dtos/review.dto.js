@@ -14,3 +14,18 @@ export const responseFromReview = (review) => ({
   imageUrl: review.image_url,
   createdAt: review.created_at
 });
+
+export const responseMyReviews = (reviews) => {
+  if (!reviews) return { reviews: [], next_cursor: null }; // reviews가 null이나 undefined일 경우 빈 배열과 null 반환
+
+  return {
+    reviews: reviews.map(review => ({
+      review_id: review.id,
+      shop_id: review.shop.id,
+      rating: review.rating,
+      comment: review.comment,
+      created_at: review.created_at,
+    })),
+    next_cursor: reviews.length === 5 ? reviews[reviews.length - 1].id : null,
+  };
+};
