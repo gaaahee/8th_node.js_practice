@@ -12,3 +12,8 @@ export const createShop = async (regionId, shopBody) => {
   const shopId = await addShop(regionId, bodyToShop(shopBody));
   return shopId;
 };
+
+export const listShopReviews = async (shopId) => {
+  const reviews = await getAllShopReviews(shopId);
+  return responseFromReviews(reviews);
+};

@@ -12,3 +12,11 @@ export const handleCreateShop = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+export const handleListShopReviews = async (req, res, next) => {
+  const reviews = await listShopReviews(
+    parseInt(req.params.shopId),
+    typeof req.query.cursor === "string" ? parseInt(req.query.cursor) : 0
+  );
+  res.status(StatusCodes.OK).json(reviews);
+};

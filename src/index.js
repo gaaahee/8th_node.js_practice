@@ -21,6 +21,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+app.get("/api/v1/shops/:shopId/reviews", handleListShopReviews);
+
 app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/regions/:regionId/shops", handleCreateShop);
 app.post("/shops/:shopId/reviews", handleCreateReview);
