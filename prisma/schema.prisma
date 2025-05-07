@@ -15,11 +15,16 @@ datasource db {
 }
 
 model UserLogin {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique @db.VarChar(50)
-  password String   @db.VarChar(30)
+  id       Int    @id @default(autoincrement())
+  email    String @unique @db.VarChar(50)
+  password String @db.VarChar(30)
 
-  userInfo UserInfo?
+  userInfo       UserInfo?
+  alarms         alarm[]
+  inquiries      Inquiry[]
+  userCategories UserCategory[]
+  missionLogs    MissionLog[]
+  reviews        Review[]
 
   @@map("userlogin")
 }
@@ -36,7 +41,7 @@ model UserInfo {
   user_name    String   @db.VarChar(20)
   phone_number String   @db.VarChar(20)
 
-  userLogin    UserLogin @relation(fields: [user_id], references: [id])
+  userLogin UserLogin @relation(fields: [user_id], references: [id])
 
   @@map("userinfo")
 }
@@ -45,11 +50,11 @@ model alarm {
   id         Int      @id @default(autoincrement())
   title      String?
   content    String?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  user_id    Int
-  userLogin  UserLogin @relation(fields: [user_id], references: [id])
+  user_id   Int
+  userLogin UserLogin @relation(fields: [user_id], references: [id])
 
   @@map("alarm")
 }
@@ -58,11 +63,11 @@ model Inquiry {
   id         Int      @id @default(autoincrement())
   user_id    Int
   content    String
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   image_url  String?  @db.VarChar(200)
 
-  userLogin  UserLogin @relation(fields: [user_id], references: [id])
+  userLogin UserLogin @relation(fields: [user_id], references: [id])
 
   @@map("inquiry")
 }
@@ -71,18 +76,18 @@ model UserCategory {
   user_id     Int
   category_id Int
 
-  userLogin   UserLogin @relation(fields: [user_id], references: [id])
-  category    Category  @relation(fields: [category_id], references: [id])
+  userLogin UserLogin @relation(fields: [user_id], references: [id])
+  category  Category  @relation(fields: [category_id], references: [id])
 
   @@id([user_id, category_id])
   @@map("usercategory")
 }
 
 model Category {
-  id         Int             @id @default(autoincrement())
-  name       String          @db.VarChar(20)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(20)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   userCategories UserCategory[]
   categoryShops  CategoryShop[]
@@ -94,8 +99,8 @@ model CategoryShop {
   category_id Int
   shop_id     Int
 
-  category    Category @relation(fields: [category_id], references: [id])
-  shop        Shop     @relation(fields: [shop_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+  shop     Shop     @relation(fields: [shop_id], references: [id])
 
   @@id([category_id, shop_id])
   @@map("categoryshop")
@@ -104,10 +109,10 @@ model CategoryShop {
 model Region {
   id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(20)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  shops      Shop[]
+  shops Shop[]
 
   @@map("region")
 }
@@ -119,9 +124,9 @@ model Shop {
   address    String   @db.VarChar(100)
   created_at DateTime @default(now())
 
-  region     Region   @relation(fields: [region_id], references: [id])
-  missions   Mission[]
-  reviews    Review[]
+  region        Region         @relation(fields: [region_id], references: [id])
+  missions      Mission[]
+  reviews       Review[]
   categoryShops CategoryShop[]
 
   @@map("shop")
@@ -136,23 +141,23 @@ model Mission {
   updated_at  DateTime @updatedAt
   due_date    DateTime
 
-  shop        Shop     @relation(fields: [shop_id], references: [id])
+  shop        Shop         @relation(fields: [shop_id], references: [id])
   missionLogs MissionLog[]
 
   @@map("mission")
 }
 
 model MissionLog {
-  id          Int      @id @default(autoincrement())
-  status      String   @db.VarChar(10)
-  user_id     Int
-  mission_id  Int
+  id           Int       @id @default(autoincrement())
+  status       String    @db.VarChar(10)
+  user_id      Int
+  mission_id   Int
   completed_at DateTime?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
 
-  userLogin   UserLogin @relation(fields: [user_id], references: [id])
-  mission     Mission   @relation(fields: [mission_id], references: [id])
+  userLogin UserLogin @relation(fields: [user_id], references: [id])
+  mission   Mission   @relation(fields: [mission_id], references: [id])
 
   @@map("missionlog")
 }
@@ -162,13 +167,13 @@ model Review {
   shop_id    Int
   rating     Int
   comment    String?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   user_id    Int
   image_url  String?  @db.VarChar(200)
 
-  shop       Shop     @relation(fields: [shop_id], references: [id])
-  userLogin  UserLogin @relation(fields: [user_id], references: [id])
+  shop      Shop      @relation(fields: [shop_id], references: [id])
+  userLogin UserLogin @relation(fields: [user_id], references: [id])
 
   @@map("review")
 }

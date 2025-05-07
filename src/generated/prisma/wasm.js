@@ -132,11 +132,92 @@ exports.Prisma.UserInfoScalarFieldEnum = {
   gender: 'gender',
   birthdate: 'birthdate',
   address: 'address',
-  updated_at: 'updated_at',
   created_at: 'created_at',
+  updated_at: 'updated_at',
   point: 'point',
   user_name: 'user_name',
   phone_number: 'phone_number'
+};
+
+exports.Prisma.AlarmScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  content: 'content',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  user_id: 'user_id'
+};
+
+exports.Prisma.InquiryScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  content: 'content',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  image_url: 'image_url'
+};
+
+exports.Prisma.UserCategoryScalarFieldEnum = {
+  user_id: 'user_id',
+  category_id: 'category_id'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.CategoryShopScalarFieldEnum = {
+  category_id: 'category_id',
+  shop_id: 'shop_id'
+};
+
+exports.Prisma.RegionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ShopScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  region_id: 'region_id',
+  address: 'address',
+  created_at: 'created_at'
+};
+
+exports.Prisma.MissionScalarFieldEnum = {
+  id: 'id',
+  shop_id: 'shop_id',
+  description: 'description',
+  point: 'point',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  due_date: 'due_date'
+};
+
+exports.Prisma.MissionLogScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  user_id: 'user_id',
+  mission_id: 'mission_id',
+  completed_at: 'completed_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  shop_id: 'shop_id',
+  rating: 'rating',
+  comment: 'comment',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  user_id: 'user_id',
+  image_url: 'image_url'
 };
 
 exports.Prisma.SortOrder = {
@@ -156,10 +237,61 @@ exports.Prisma.UserInfoOrderByRelevanceFieldEnum = {
   phone_number: 'phone_number'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.alarmOrderByRelevanceFieldEnum = {
+  title: 'title',
+  content: 'content'
+};
+
+exports.Prisma.InquiryOrderByRelevanceFieldEnum = {
+  content: 'content',
+  image_url: 'image_url'
+};
+
+exports.Prisma.CategoryOrderByRelevanceFieldEnum = {
+  name: 'name'
+};
+
+exports.Prisma.RegionOrderByRelevanceFieldEnum = {
+  name: 'name'
+};
+
+exports.Prisma.ShopOrderByRelevanceFieldEnum = {
+  name: 'name',
+  address: 'address'
+};
+
+exports.Prisma.MissionOrderByRelevanceFieldEnum = {
+  description: 'description'
+};
+
+exports.Prisma.MissionLogOrderByRelevanceFieldEnum = {
+  status: 'status'
+};
+
+exports.Prisma.ReviewOrderByRelevanceFieldEnum = {
+  comment: 'comment',
+  image_url: 'image_url'
+};
+
 
 exports.Prisma.ModelName = {
   UserLogin: 'UserLogin',
-  UserInfo: 'UserInfo'
+  UserInfo: 'UserInfo',
+  alarm: 'alarm',
+  Inquiry: 'Inquiry',
+  UserCategory: 'UserCategory',
+  Category: 'Category',
+  CategoryShop: 'CategoryShop',
+  Region: 'Region',
+  Shop: 'Shop',
+  Mission: 'Mission',
+  MissionLog: 'MissionLog',
+  Review: 'Review'
 };
 
 /**
