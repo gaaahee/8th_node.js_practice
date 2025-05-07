@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon --exec node src/index.js"
+    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js\""
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/gaaahee/8th_node.js_practice#readme",
   "dependencies": {
+    "@prisma/client": "^6.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -27,6 +28,7 @@
     "mysql2": "^3.14.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prisma": "^6.7.0"
   }
 }

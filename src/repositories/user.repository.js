@@ -1,109 +1,109 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
 // User 데이터 삽입
 export const addUser = async (data) => {
-  const conn = await pool.getConnection();
-
-  // 1. userlogin 테이블에 이메일 중복 확인
   try {
-    const [confirm] = await conn.query(
-      `SELECT EXISTS(SELECT 1 FROM userlogin WHERE email = ?) as isExistEmail;`,
-      [data.email]
-    );
+    // 1. userlogin 테이블 - 이메일 중복 확인
+    const existingUser = await prisma.userlogin.findUnique({
+      where: { email: data.email },
+    });
 
-    if (confirm[0].isExistEmail) {
+    if (existingUser) {
       return null;
     }
 
     // 2. userlogin 테이블에 이메일, 비밀번호 삽입
-    const [result] = await conn.query(
-      `INSERT INTO userlogin (email, password) VALUES (?, ?);`,
-      [data.email, data.password]
-    );
+    const newUserLogin = await prisma.userlogin.create({
+      data: {
+        email: data.email,
+        password: data.password,
+      },
+    });
 
-    const userId = result.insertId;
+    const userId = newUserLogin.id;
 
     // 3. userinfo 테이블에 사용자 정보 삽입
-    await conn.query(
-      `INSERT INTO userinfo (user_id, gender, birthdate, address, user_name, phone_number, created_at, updated_at) 
-       VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());`,
-      [
-        userId,
-        data.gender,
-        data.birth,
-        data.address,
-        data.name,
-        data.phoneNumber
-      ]
-    );
+    await prisma.userinfo.create({
+      data: {
+        user_id: userId,
+        gender: data.gender,
+        birthdate: new Date(data.birth), // 날짜 형식으로 변환
+        address: data.address,
+        user_name: data.name,
+        phone_number: data.phoneNumber,
+      },
+    });
 
     // 4. 선호 카테고리가 있으면 usercategory 테이블에 삽입
     if (data.preferences && data.preferences.length > 0) {
-      for (const categoryId of data.preferences) {
-        await conn.query(
-          `INSERT INTO usercategory (user_id, category_id) VALUES (?, ?);`,
-          [userId, categoryId]
-        );
-      }
+      const preferenceData = data.preferences.map((categoryId) => ({
+        user_id: userId,
+        category_id: categoryId,
+      }));
+      await prisma.usercategory.createMany({
+        data: preferenceData,
+      });
     }
+
     return userId;
 
   } catch (err) {
+    console.error("Error in addUser:", err);
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
-  } finally {
-    conn.release();
   }
 };
 
 // 사용자 정보 조회
 export const getUser = async (userId) => {
-  const conn = await pool.getConnection();
-
   try {
-    const [user] = await conn.query(
-      `SELECT l.email, i.user_name as name, i.gender, i.birthdate as birth, 
-              i.address, i.phone_number as phoneNumber, i.point
-       FROM userlogin l 
-       JOIN userinfo i ON l.id = i.user_id
-       WHERE l.id = ?;`, userId
-    );
+    const userLogin = await prisma.userlogin.findUnique({
+      where: { id: userId },
+      include: {
+        userinfo: true, // userinfo 테이블 데이터도 가져옴
+      },
+    });
 
-    console.log(user);
-
-    if (user.length == 0) {
+    if (!userLogin || !userLogin.userinfo) {
       return null;
     }
 
-    return user;
+    const userInfo = userLogin.userinfo;
+
+    return {
+      email: userLogin.email,
+      name: userInfo.user_name,
+      gender: userInfo.gender,
+      birth: userInfo.birthdate,
+      address: userInfo.address,
+      phoneNumber: userInfo.phone_number,
+      point: userInfo.point,
+    };
   } catch (err) {
+    console.error("Error in getUser:", err);
     throw new Error(
       `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
     );
-  } finally {
-    conn.release();
   }
 };
 
 // 사용자 선호 카테고리 조회
 export const getUserPreferencesByUserId = async (userId) => {
-  const conn = await pool.getConnection();
-  
   try {
-    const [preferences] = await conn.query(
-      `SELECT c.id, c.name
-       FROM usercategory uc 
-       JOIN category c ON uc.category_id = c.id
-       WHERE uc.user_id = ?
-       ORDER BY c.id ASC;`,
-      [userId]
-    );
-    
-    return preferences;
+    const userCategories = await prisma.usercategory.findMany({
+      where: { user_id: userId },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        category: { id: 'asc' },
+      },
+    });
+
+    return userCategories.map(uc => uc.category);
   } catch (err) {
+    console.error("Error in getUserPreferencesByUserId:", err);
     throw new Error(`오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`);
-  } finally {
-    conn.release();
   }
 };

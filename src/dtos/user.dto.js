@@ -15,12 +15,13 @@ export const bodyToUser = (body) => {
 };
 
 export const responseFromUser = ({ user, preferences }) => {
-  // user가 배열로 올 수도 있으니 첫 번째 요소만 사용
-  const userInfo = Array.isArray(user) ? user[0] : user;
+  if (!user) {
+    throw new Error("사용자 정보를 응답으로 변환하는 중 오류가 발생했습니다: 사용자 정보가 없습니다.");
+  }
 
   return {
-    email: userInfo.email,
-    name: userInfo.name,
+    email: user.email,
+    name: user.name,
     preferCategory: preferences.map((pref) => pref.name)
   };
 };
