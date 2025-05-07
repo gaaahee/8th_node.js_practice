@@ -107,19 +107,3 @@ export const getUserPreferencesByUserId = async (userId) => {
     throw new Error(`오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`);
   }
 };
-
-export const getAllShopReviews = async (shopId) => {
-  const reviews = await prisma.userShopReview.findMany({
-    select: {
-      id: true,
-      comment: true,
-      shopId: true,
-      userId: true,
-    },
-    where: { shopId: shopId, id: { gt: cursor } },
-    orderBy: { id: "asc" },
-    take: 5,
-  });
-
-  return reviews;
-};
