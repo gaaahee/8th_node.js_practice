@@ -304,11 +304,12 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "mysql://root:0823@localhost:3306/8th_umc"
+        "value": null
       }
     }
   },

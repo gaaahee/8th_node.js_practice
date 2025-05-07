@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from 'express'
 import cors from 'cors';
 import { handleUserSignUp } from "./controllers/user.controller.js";
-import { handleCreateShop } from "./controllers/shop.controller.js";
+import { handleCreateShop, handleListShopReviews } from "./controllers/shop.controller.js";
 import { handleCreateReview } from "./controllers/review.controller.js";
 import { handleCreateMission } from "./controllers/mission.controller.js";
 import { handleChallengeMission } from "./controllers/mission-log.controller.js";
