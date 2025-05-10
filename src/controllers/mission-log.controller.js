@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { challengeMission } from "../services/mission-log.service.js";
+import { challengeMission, listInProgressMissions } from "../services/mission-log.service.js";
 import { bodyToMissionChallenge } from "../dtos/mission-log.dto.js";
 
 export const handleChallengeMission = async (req, res) => {
@@ -27,5 +27,23 @@ export const handleChallengeMission = async (req, res) => {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
       error: "미션 도전에 실패했습니다." 
     });
+  }
+};
+
+// 내가 진행 중인 미션 목록 조회
+export const handleListInProgressMissions = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { cursor } = req.query;
+
+    const result = await listInProgressMissions(userId, cursor);
+
+    return res.status(StatusCodes.OK).json(result);
+  } catch (error) {
+    console.error("진행 중인 미션 목록 조회 에러:", error);
+    const statusCode = error.status || StatusCodes.INTERNAL_SERVER_ERROR;
+    const errorMessage = error.message || "서버 내부 오류가 발생했습니다.";
+    
+    return res.status(statusCode).json({ error: errorMessage });
   }
 };

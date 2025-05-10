@@ -5,7 +5,7 @@ import { handleUserSignUp } from "./controllers/user.controller.js";
 import { handleCreateShop, handleListShopReviews } from "./controllers/shop.controller.js";
 import { handleCreateReview, handleListMyReviews } from "./controllers/review.controller.js";
 import { handleCreateMission, handleListMissionsForShop } from "./controllers/mission.controller.js";
-import { handleChallengeMission } from "./controllers/mission-log.controller.js";
+import { handleChallengeMission, handleListInProgressMissions } from "./controllers/mission-log.controller.js";
 
 dotenv.config();
 
@@ -24,6 +24,7 @@ app.get('/', (req, res) => {
 app.get("/api/v1/shops/:shopId/reviews", handleListShopReviews);
 app.get("/users/:userId/reviews", handleListMyReviews);
 app.get("/:shopId/missions", handleListMissionsForShop);
+app.get("/users/:userId/missions/in-progress", handleListInProgressMissions);
 
 app.post("/api/v1/users/signup", handleUserSignUp);
 app.post("/regions/:regionId/shops", handleCreateShop);
