@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { createMission } from "../services/mission.service.js";
+import { createMission, listMissionsForShop } from "../services/mission.service.js";
 
 export const handleCreateMission = async (req, res) => {
   const shopId = req.params.shopId;
@@ -15,5 +15,24 @@ export const handleCreateMission = async (req, res) => {
     }
     
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+  }
+};
+
+// 특정 가게의 미션 목록 조회
+export const handleListMissionsForShop = async (req, res, next) => {
+  try {
+    const { shopId } = req.params;
+    const { cursor } = req.query;
+
+    const missionData = await listMissionsForShop(shopId, cursor);
+    
+    return res.status(StatusCodes.OK).json(missionData);
+  } catch (error) {
+    console.error("특정 가게 미션 목록 조회 에러:", error);
+    // 서비스에서 설정한 status 코드가 있다면 사용, 없다면 기본값 사용
+    const statusCode = error.status || StatusCodes.INTERNAL_SERVER_ERROR;
+    const errorMessage = error.message || "서버 내부 오류가 발생했습니다.";
+    
+    return res.status(statusCode).json({ error: errorMessage });
   }
 };

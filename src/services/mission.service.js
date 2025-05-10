@@ -1,5 +1,5 @@
-import { bodyToMission } from "../dtos/mission.dto.js";
-import { findShopById, addMission } from "../repositories/mission.repository.js";
+import { bodyToMission, previewShopMissions } from "../dtos/mission.dto.js";
+import { findShopById, addMission, getMissionsByShopId } from "../repositories/mission.repository.js";
 
 export const createMission = async (shopId, missionBody) => {
   // 1. 가게 존재 여부 확인
@@ -15,4 +15,39 @@ export const createMission = async (shopId, missionBody) => {
   const missionId = await addMission(shopId, missionData);
   
   return missionId;
+};
+
+// 특정 가게의 미션 목록 조회
+export const listMissionsForShop = async (shopId, cursorQuery) => {
+  const shopIdNum = parseInt(shopId);
+  if (isNaN(shopIdNum)) {
+      throw new Error("유효하지 않은 가게 ID입니다.");
+  }
+
+  // 1. 가게 존재 여부 확인
+  const shop = await findShopById(shopIdNum);
+  if (!shop) {
+      const error = new Error("존재하지 않는 가게입니다.");
+      error.status = 404;
+      throw error;
+  }
+
+  const cursor = cursorQuery ? parseInt(cursorQuery) : undefined;
+  if (cursorQuery && isNaN(cursor)) {
+      const error = new Error("유효하지 않은 커서입니다.");
+      error.status = 400;
+      throw error;
+  }
+  
+  const takeCount = 10; // Repository의 take 값과 일치해야 함
+  const missions = await getMissionsByShopId(shopIdNum, cursor);
+
+  const hasNext = missions.length === takeCount;
+  const nextCursor = hasNext && missions.length > 0 ? missions[missions.length - 1].id : null;
+
+  return {
+      missions: previewShopMissions(missions),
+      hasNext: hasNext,
+      nextCursor: nextCursor,
+  };
 };

@@ -30,3 +30,30 @@ export const addMission = async (shopId, missionData) => {
     throw err;
   }
 };
+
+// 특정 가게의 모든 미션 조회
+export const getMissionsByShopId = async (shopId, cursor) => {
+  const take = 10; // 한 번에 가져올 미션 개수
+  try {
+    const missions = await prisma.mission.findMany({
+      where: {
+        shop_id: parseInt(shopId),
+        ...(cursor && { id: { lt: parseInt(cursor) } }),
+      },
+      select: {
+        id: true,
+        description: true,
+        point: true,
+        due_date: true,
+        created_at: true,
+        updated_at: true,
+      },
+      orderBy: { id: "desc" },
+      take: take,
+    });
+    return missions;
+  } catch (error) {
+    console.error("Error in getMissionsByShopId:", error);
+    throw error;
+  }
+};
