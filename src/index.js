@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 
 app.get("/api/v1/shops/:shopId/reviews", handleListShopReviews);
 app.get("/users/:userId/reviews", handleListMyReviews);
-app.get("/:shopId/missions", handleListMissionsForShop);
+app.get("/shops/:shopId/missions", handleListMissionsForShop);
 app.get("/users/:userId/missions/in-progress", handleListInProgressMissions);
 
 app.post("/api/v1/users/signup", handleUserSignUp);
