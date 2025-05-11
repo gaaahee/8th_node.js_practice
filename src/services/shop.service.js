@@ -1,9 +1,10 @@
 import { findRegionById, addShop } from "../repositories/shop.repository.js";
 import { getAllShopReviews } from "../repositories/shop.repository.js";
-import { responseFromReviews } from "../dtos/review.dto.js";
+import { responseFromReview } from "../dtos/review.dto.js";
 import { bodyToShop } from "../dtos/shop.dto.js";
 import { NotFoundError, ValidationError } from "../errors.js";
 
+// 상점 추가
 export const createShop = async (regionId, shopBody) => {
   // 1. 지역 존재 여부 확인
   const regionExists = await findRegionById(regionId);
@@ -16,6 +17,7 @@ export const createShop = async (regionId, shopBody) => {
   return shopId;
 };
 
+// 상점 리뷰 목록 조회
 export const listShopReviews = async (shopId, cursorQuery) => {
   const shopIdNum = parseInt(shopId);
   if (isNaN(shopIdNum)) {
@@ -28,5 +30,5 @@ export const listShopReviews = async (shopId, cursorQuery) => {
   }
 
   const reviews = await getAllShopReviews(shopIdNum, cursor);
-  return responseFromReviews(reviews);
+  return responseFromReview(reviews);
 };

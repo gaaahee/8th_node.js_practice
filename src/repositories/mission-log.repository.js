@@ -8,8 +8,8 @@ export const findMissionById = async (missionId) => {
     });
     return mission;
   } catch (error) {
-    console.error("Error in findMissionById:", error);
-    throw error;
+    console.error("Error in findMissionById:", err);
+    throw err;
   }
 };
 
@@ -20,7 +20,7 @@ export const checkExistingMissionLog = async (userId, missionId) => {
       where: {
         user_id: userId,
         mission_id: parseInt(missionId),
-        status: 'in_progress',
+        status: 'inProgress',
       },
     });
     return existingLog !== null; // missionlog에 존재하면 true, 없으면 false 반환
@@ -36,7 +36,7 @@ export const createMissionLog = async (userId, missionId) => {
       data: {
         user_id: userId,
         mission_id: parseInt(missionId),
-        status: 'in_progress',
+        status: 'inProgress',
       },
     });
     return newMissionLog.id;

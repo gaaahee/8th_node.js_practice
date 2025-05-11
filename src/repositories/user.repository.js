@@ -48,9 +48,7 @@ export const addUser = async (data) => {
 
   } catch (err) {
     console.error("Error in addUser:", err);
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
+    throw err; // Prisma 에러를 그대로 전달
   }
 };
 
@@ -81,9 +79,7 @@ export const getUser = async (userId) => {
     };
   } catch (err) {
     console.error("Error in getUser:", err);
-    throw new Error(
-      `오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`
-    );
+    throw err;
   }
 };
 
@@ -103,6 +99,6 @@ export const getUserPreferencesByUserId = async (userId) => {
     return userCategories.map(uc => uc.category);
   } catch (err) {
     console.error("Error in getUserPreferencesByUserId:", err);
-    throw new Error(`오류가 발생했어요. 요청 파라미터를 확인해주세요. (${err})`);
+    throw err;
   }
 };
