@@ -3,8 +3,6 @@ import { prisma } from "../db.config.js";
 // User 데이터 삽입
 export const addUser = async (data) => {
   try {
-    console.log("addUser - data received:", data);
-    console.log("addUser - data.email:", data.email);
     // 1. UserLogin 테이블 - 이메일 중복 확인
     const existingUser = await prisma.userLogin.findUnique({
       where: { email: data.email },
