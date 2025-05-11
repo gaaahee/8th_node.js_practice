@@ -3,8 +3,10 @@ import { prisma } from "../db.config.js";
 // User 데이터 삽입
 export const addUser = async (data) => {
   try {
-    // 1. userlogin 테이블 - 이메일 중복 확인
-    const existingUser = await prisma.userlogin.findUnique({
+    console.log("addUser - data received:", data);
+    console.log("addUser - data.email:", data.email);
+    // 1. UserLogin 테이블 - 이메일 중복 확인
+    const existingUser = await prisma.userLogin.findUnique({
       where: { email: data.email },
     });
 
@@ -12,18 +14,17 @@ export const addUser = async (data) => {
       return null;
     }
 
-    // 2. userlogin 테이블에 이메일, 비밀번호 삽입
-    const newUserLogin = await prisma.userlogin.create({
+    // 2. UserLogin 테이블에 이메일, 비밀번호 삽입
+    const newUserLogin = await prisma.userLogin.create({
       data: {
         email: data.email,
         password: data.password,
       },
     });
-
     const userId = newUserLogin.id;
 
-    // 3. userinfo 테이블에 사용자 정보 삽입
-    await prisma.userinfo.create({
+    // 3. UserInfo 테이블에 사용자 정보 삽입
+    await prisma.userInfo.create({
       data: {
         user_id: userId,
         gender: data.gender,
@@ -34,13 +35,13 @@ export const addUser = async (data) => {
       },
     });
 
-    // 4. 선호 카테고리가 있으면 usercategory 테이블에 삽입
+    // 4. 선호 카테고리가 있으면 UserCategory 테이블에 삽입
     if (data.preferences && data.preferences.length > 0) {
       const preferenceData = data.preferences.map((categoryId) => ({
         user_id: userId,
         category_id: categoryId,
       }));
-      await prisma.usercategory.createMany({
+      await prisma.userCategory.createMany({
         data: preferenceData,
       });
     }
@@ -58,18 +59,18 @@ export const addUser = async (data) => {
 // 사용자 정보 조회
 export const getUser = async (userId) => {
   try {
-    const userLogin = await prisma.userlogin.findUnique({
+    const userLogin = await prisma.userLogin.findUnique({
       where: { id: userId },
       include: {
-        userinfo: true, // userinfo 테이블 데이터도 가져옴
+        userInfo: true, // UserInfo 테이블 데이터도 가져옴
       },
     });
 
-    if (!userLogin || !userLogin.userinfo) {
+    if (!userLogin || !userLogin.userInfo) {
       return null;
     }
 
-    const userInfo = userLogin.userinfo;
+    const userInfo = userLogin.userInfo;
 
     return {
       email: userLogin.email,
@@ -91,7 +92,7 @@ export const getUser = async (userId) => {
 // 사용자 선호 카테고리 조회
 export const getUserPreferencesByUserId = async (userId) => {
   try {
-    const userCategories = await prisma.usercategory.findMany({
+    const userCategories = await prisma.userCategory.findMany({
       where: { user_id: userId },
       include: {
         category: true,
