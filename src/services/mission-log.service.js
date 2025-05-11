@@ -5,25 +5,27 @@ import {
   getInProgressMissionsByUserId
 } from "../repositories/mission-log.repository.js";
 import { previewInProgressMissions } from "../dtos/mission-log.dto.js";
+import { NotFoundError, AlreadyExistsError, ValidationError } from "../errors.js";
 
+// 미션 도전(미션 상태 변경)
 export const challengeMission = async (missionId, challengeData) => {
   // 1. 미션 존재 여부 확인
   const missionExists = await findMissionById(missionId);
   if (!missionExists) {
-    throw new Error("존재하지 않는 미션입니다.");
+    throw new NotFoundError("미션을", "존재하지 않는 미션입니다.", { missionId });
   }
 
-  // 2. 중복 도전 확인
+  // 2. 이미 진행 중인 미션인지 확인
   const hasExistingLog = await checkExistingMissionLog(
     challengeData.userId, 
     missionId
   );
   
   if (hasExistingLog) {
-    throw new Error("이미 도전 중인 미션입니다.");
+    throw new AlreadyExistsError("미션이", "이미 도전 중인 미션입니다.", { userId: challengeData.userId, missionId });
   }
 
-  // 3. 미션 도전 기록 생성
+  // 3. 미션 로그 생성
   const missionLogId = await createMissionLog(
     challengeData.userId,
     missionId
@@ -35,19 +37,19 @@ export const challengeMission = async (missionId, challengeData) => {
 // 내가 진행 중인 미션 목록 조회
 export const listInProgressMissions = async (userId, cursorQuery) => {
   const userIdNum = parseInt(userId);
+
+  // 유효한 사용자 ID인지 확인
   if (isNaN(userIdNum)) {
-    const error = new Error("유효하지 않은 사용자 ID입니다.");
-    error.status = 400;
-    throw error;
+    throw new ValidationError("유효하지 않은 사용자 ID 형식입니다.", { userId });
   }
 
+  // 커서 유효성 검사
   const cursor = cursorQuery ? parseInt(cursorQuery) : undefined;
   if (cursorQuery && isNaN(cursor)) {
-      const error = new Error("유효하지 않은 커서입니다.");
-      error.status = 400;
-      throw error;
+      throw new ValidationError("유효하지 않은 커서 형식입니다.", { cursor: cursorQuery });
   }
 
+  // 진행 중인 미션 목록 조회
   const takeCount = 10; // Repository의 take 값과 일치
   const missionLogs = await getInProgressMissionsByUserId(userIdNum, cursor);
 

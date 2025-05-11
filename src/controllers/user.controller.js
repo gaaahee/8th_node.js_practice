@@ -6,7 +6,10 @@ export const handleUserSignUp = async (req, res, next) => {
     console.log("회원가입을 요청했습니다!");
     console.log("body:", req.body);
   
-    const user = await userSignUp(bodyToUser(req.body));
-
-    return res.status(StatusCodes.OK).success(user);
+    try {
+        const user = await userSignUp(bodyToUser(req.body));
+        return res.status(StatusCodes.CREATED).success(user);
+    } catch (error) {
+        next(error);
+    }
 };
