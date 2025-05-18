@@ -3,20 +3,26 @@ import { findShopById, addMission, getMissionsByShopId } from "../repositories/m
 import { NotFoundError, ValidationError } from "../errors.js";
 
 // 미션 추가
-export const createMission = async (shopId, missionBody) => {
-  // 1. 가게 존재 여부 확인
+export const createMission = async (shopIdParam, missionBody) => {
+  // 1. shopId 유효성 검사
+  const shopId = parseInt(shopIdParam);
+  if (isNaN(shopId)) {
+    throw new ValidationError("유효하지 않은 가게 ID 형식입니다.", { shopId: shopIdParam });
+  }
+
+  // 2. 가게 존재 여부 확인
   const shopExists = await findShopById(shopId);
   if (!shopExists) {
     throw new NotFoundError("가게를", "존재하지 않는 가게입니다.", { shopId });
   }
-  
-  // 2. DTO 변환
+
+  // 3. DTO 변환
   const missionData = bodyToMission(missionBody);
-  
-  // 3. 미션 추가
+
+  // 4. 미션 추가
   const missionId = await addMission(shopId, missionData);
-  
-  return missionId;
+
+  return missionIdResult;
 };
 
 // 특정 가게의 미션 목록 조회

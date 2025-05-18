@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { createMission, listMissionsForShop } from "../services/mission.service.js";
 
-export const handleCreateMission = async (req, res) => {
+export const handleCreateMission = async (req, res, next) => {
   const shopId = req.params.shopId;
   try {
     const missionId = await createMission(shopId, req.body);

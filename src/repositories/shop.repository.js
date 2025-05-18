@@ -4,7 +4,7 @@ import { prisma } from "../db.config.js";
 export const findRegionById = async (regionId) => {
   try {
     const region = await prisma.region.findUnique({
-      where: { id: parseInt(regionId) },
+      where: { id: regionId },
     });
     return region;
   } catch (error) {
@@ -13,13 +13,13 @@ export const findRegionById = async (regionId) => {
   }
 };
 
-// shop 테이블에 가게 추가
+// 상점 추가
 export const addShop = async (regionId, shopData) => {
   try {
     const newShop = await prisma.shop.create({
       data: {
         name: shopData.name,
-        region_id: parseInt(regionId),
+        region_id: regionId,
         address: shopData.address,
       },
     });
@@ -30,7 +30,20 @@ export const addShop = async (regionId, shopData) => {
   }
 };
 
-// 특정 가게의 모든 리뷰 조회
+// 상점 ID로 상점 정보 조회
+export const findShopById = async (shopId) => {
+  try {
+    const shop = await prisma.shop.findUnique({
+      where: { id: parseInt(shopId) },
+    });
+    return shop;
+  } catch (error) {
+    console.error("Error in findShopById (shop.repository):", error);
+    throw error;
+  }
+};
+
+// 특정 상점의 모든 리뷰 조회
 export const getAllShopReviews = async (shopId, cursor) => {
   const take = 5; // 한 번에 가져올 리뷰 개수
   try {
