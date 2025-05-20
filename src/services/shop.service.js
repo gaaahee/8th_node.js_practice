@@ -1,5 +1,5 @@
 import { findRegionById, addShop, findShopById as findShopByIdRepo, getAllShopReviews } from "../repositories/shop.repository.js"; // findShopByIdRepo 임포트
-import { responseFromReview } from "../dtos/review.dto.js";
+import { responseShopReviewsList } from "../dtos/review.dto.js";
 import { bodyToShop } from "../dtos/shop.dto.js";
 import { NotFoundError, ValidationError } from "../errors.js";
 
@@ -40,6 +40,8 @@ export const listShopReviews = async (shopId, cursorQuery) => {
     throw new NotFoundError("가게를", "존재하지 않는 가게입니다.", { shopId: shopIdNum });
   }
 
+  // 리뷰 목록 조회
+  const takeCountFromRepo = 5;
   const reviews = await getAllShopReviews(shopIdNum, cursor);
-  return responseFromReview(reviews);
+  return responseShopReviewsList(reviews, takeCountFromRepo);
 };

@@ -32,10 +32,10 @@ export const handleListShopReviews = async (req, res, next) => {
                     items: {
                       type: "object",
                       properties: {
-                        id: { type: "number" },
-                        store: { type: "object", properties: { id: { type: "number" }, name: { type: "string" } } },
-                        user: { type: "object", properties: { id: { type: "number" }, email: { type: "string" }, name: { type: "string" } } },
-                        content: { type: "string" }
+                        userId: { type: "number" },
+                        rating: { type: "number" },
+                        comment: { type: "string" },
+                        imageUrl: { type: "string", format: "uri" }
                       }
                     }
                   },
