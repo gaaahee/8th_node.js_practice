@@ -2,7 +2,7 @@ import { bodyToReview, responseFromReview, responseMyReviews } from "../dtos/rev
 import { findShopById, addReview, getMyReviewsByUserId } from "../repositories/review.repository.js";
 import { getUser } from "../repositories/user.repository.js";
 import { NotFoundError, ValidationError, AlreadyExistsError } from "../errors.js";
-import { Prisma } from "@prisma/client"; // Prisma 에러 처리를 위해 임포트
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library.js";
 
 // 리뷰 작성
 export const createReview = async (shopIdParam, reviewBody) => {
@@ -36,7 +36,7 @@ export const createReview = async (shopIdParam, reviewBody) => {
     const review = await addReview(shopId, reviewData);
     return responseFromReview(review);
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
         throw new AlreadyExistsError("리뷰를", "이미 해당 가게에 리뷰를 작성했습니다.", { shopId, userId: reviewData.userId });
       }

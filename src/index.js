@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
 import express from 'express'
 import cors from 'cors';
-import swaggerAutogen from "swagger-autogen";
-import swaggerUiExpress from "swagger-ui-express";
+import { setupSwagger } from "./swagger/swagger.js";
 import { handleUserSignUp } from "./controllers/user.controller.js";
 import { handleCreateShop, handleListShopReviews } from "./controllers/shop.controller.js";
 import { handleCreateReview, handleListMyReviews } from "./controllers/review.controller.js";
@@ -72,6 +71,9 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
+// Swagger 설정 적용
+setupSwagger(app);
+/*
 // Swagger 설정
 app.use(
   "/docs",
@@ -103,3 +105,4 @@ app.get("/openapi.json", async (req, res, next) => {
   const result = await swaggerAutogen(options)(outputFile, routes, doc);
   res.json(result ? result.data : null);
 });
+*/

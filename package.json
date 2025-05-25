@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/gaaahee/8th_node.js_practice#readme",
   "dependencies": {
-    "@prisma/client": "^6.7.0",
+    "@prisma/client": "^6.8.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

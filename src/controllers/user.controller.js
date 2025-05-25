@@ -53,25 +53,7 @@ export const handleUserSignUp = async (req, res, next) => {
     };
     #swagger.responses[400] = {
       description: "회원 가입 실패 응답",
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            properties: {
-              resultType: { type: "string", example: "FAIL" },
-              error: {
-                type: "object",
-                properties: {
-                  errorCode: { type: "string", example: "U001" },
-                  reason: { type: "string" },
-                  data: { type: "object" }
-                }
-              },
-              success: { type: "object", nullable: true, example: null }
-            }
-          }
-        }
-      }
+      content: { "application/json": { schema: { $ref: '#/components/schemas/ErrorResponse400_UserSignUp' } } }
     };
   */
   

@@ -10,19 +10,22 @@ export const createMission = async (shopIdParam, missionBody) => {
     throw new ValidationError("유효하지 않은 가게 ID 형식입니다.", { shopId: shopIdParam });
   }
 
-  // 2. 가게 존재 여부 확인
+  // 2. DTO 변환 및 deadline 유효성 검사
+  const missionData = bodyToMission(missionBody);
+  if (!missionData.dueDate || isNaN(missionData.dueDate.getTime())) {
+    throw new ValidationError("마감일 날짜 형식이 올바르지 않거나 누락되었습니다. YYYY-MM-DD 형식으로 입력해주세요.", { deadline: missionBody.deadline });
+  }
+
+  // 3. 가게 존재 여부 확인
   const shopExists = await findShopById(shopId);
   if (!shopExists) {
     throw new NotFoundError("가게를", "존재하지 않는 가게입니다.", { shopId });
   }
-
-  // 3. DTO 변환
-  const missionData = bodyToMission(missionBody);
-
-  // 4. 미션 추가
+  
+  // 5. 미션 추가
   const missionId = await addMission(shopId, missionData);
 
-  return missionIdResult;
+  return missionId;
 };
 
 // 특정 가게의 미션 목록 조회

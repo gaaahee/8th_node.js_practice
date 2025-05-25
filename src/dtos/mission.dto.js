@@ -1,8 +1,9 @@
 export const bodyToMission = (body) => {
+  const dueDateObject = body.deadline ? new Date(body.deadline) : null;
   return {
     description: body.description,
     point: parseInt(body.point),
-    dueDate: body.dueDate // 'YYYY-MM-DD'
+    dueDate: dueDateObject // 'YYYY-MM-DD'
   };
 };
 

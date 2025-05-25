@@ -19,11 +19,16 @@ export const addReview = async (shopId, reviewData) => {
     const newReview = await prisma.review.create({
       data: {
         shop_id: parseInt(shopId),
-        user_id: reviewData.userId,
+        user_id: parseInt(reviewData.userId),
         rating: reviewData.rating,
         comment: reviewData.comment,
         image_url: reviewData.imageUrl,
       },
+      include: {
+        shop: {
+          select: { id: true }
+        }
+      }
     });
     return newReview;
   } catch (err) {
