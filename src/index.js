@@ -7,8 +7,17 @@ import { handleCreateShop, handleListShopReviews } from "./controllers/shop.cont
 import { handleCreateReview, handleListMyReviews } from "./controllers/review.controller.js";
 import { handleCreateMission, handleListMissionsForShop } from "./controllers/mission.controller.js";
 import { handleChallengeMission, handleListInProgressMissions } from "./controllers/mission-log.controller.js";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import session from "express-session";
+import passport from "passport";
+import { googleStrategy } from "./auth.config.js";
+import { prisma } from "./db.config.js";
 
 dotenv.config();
+
+passport.use(googleStrategy);
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
 const app = express();
 const port = process.env.PORT;
@@ -35,7 +44,28 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(
+  session({
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+    },
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.EXPRESS_SESSION_SECRET,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, // ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get('/', (req, res) => {
+  // #swagger.ignore = true
+  console.log(req.user);
   res.send('Hello World!')
 })
 
@@ -70,6 +100,16 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+app.get("/oauth2/login/google", passport.authenticate("google"));
+app.get(
+  "/oauth2/callback/google",
+  passport.authenticate("google", {
+    failureRedirect: "/oauth2/login/google",
+    failureMessage: true,
+  }),
+  (req, res) => res.redirect("/")
+);
 
 // Swagger 설정 적용
 setupSwagger(app);
